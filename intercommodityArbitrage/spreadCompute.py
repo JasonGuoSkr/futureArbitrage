@@ -16,7 +16,8 @@ import rqdatac as rq
 
 def daily_compute(trade_date, contract_list):
     # 数据加载
-    data_load = intercommodityArbitrage.futureData.future_data_load(contract_list, start_date=trade_date, end_date=trade_date)
+    data_load = intercommodityArbitrage.futureData.future_data_load(contract_list, start_date=trade_date,
+                                                                    end_date=trade_date)
 
     data_df = pd.DataFrame()
     for contract_id in contract_list:
@@ -74,7 +75,7 @@ if __name__ == '__main__':
     tradeDate = '20200416'
 
     startDate = '20200413'
-    endDate = '20200413'
+    endDate = '20200417'
 
     contractList = ('IF2004', 'IH2004')
     # contractList = 'IF2003'
@@ -82,5 +83,5 @@ if __name__ == '__main__':
     # Data = futureData.future_data_load(contractList, start_date=startDate, end_date=endDate)
     Data = spread_compute(startDate, endDate, contractList)
 
-    plt.plot(Data['spread_pct'])
+    plt.plot(Data['spread_point'])
     plt.show()
