@@ -25,6 +25,7 @@ def future_data_load(args, start_date, end_date):
         except AttributeError:
             print(contract_id)
             raise AttributeError
+
         data_dict[contract_id] = contract_data
     else:
         data_dict = dict()
@@ -46,9 +47,9 @@ if __name__ == '__main__':
     rq.init("ricequant", "8ricequant8", ('10.29.135.119', 16010))
 
     startDate = '20200302'
-    endDate = '20200309'
+    endDate = '20200409'
 
-    # contractList = ('IF2003', 'IF2004')
-    contractList = 'IF2003'
+    contractList = ('IF2003', 'IF2004')
+    # contractList = 'IF2003'
 
     Data = future_data_load(contractList, start_date=startDate, end_date=endDate)
