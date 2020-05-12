@@ -18,14 +18,14 @@ def daily_compute(trade_date, contract_list):
     # 数据加载
     data_load = intercommodityArbitrage.futureData.future_data_load(contract_list, start_date=trade_date, end_date=trade_date)
 
-    data_join = pd.DataFrame()
+    data_df = pd.DataFrame()
     for contract_id in contract_list:
         price_last = data_load[contract_id]['last']
         price_last.name = contract_id + '_last'
-        data_join = pd.concat([data_join, price_last], axis=1)
+        data_df = pd.concat([data_df, price_last], axis=1)
 
     # 价差计算
-    # data_log = np.log(data_join)
+    # data_log = np.log(data_df)
     #
     # ols_factor = sm.add_constant(data_log)
     #
@@ -36,17 +36,17 @@ def daily_compute(trade_date, contract_list):
     # data_log['spread_log'] = ols_factor.iloc[:, -1] - ols_factor.iloc[:, :-1] * param_series
 
     # 日内收益
-    pct_in_day = data_join / data_join.iloc[0, :]
+    pct_in_day = data_df / data_df.iloc[0, :]
     pct_in_day['spread_pct'] = pct_in_day.iloc[:, 0] - pct_in_day.iloc[:, 1]
     # pct_in_day.index = pct_in_day.index.strftime('%Y-%m-%d %H:%m:%s:%f')
 
-    point_in_day = data_join - data_join.iloc[0, :]
+    point_in_day = data_df - data_df.iloc[0, :]
     point_in_day['spread_point'] = point_in_day.iloc[:, 0] - point_in_day.iloc[:, 1]
 
     # plt.plot(pct_in_day['spread_pct'])
     # plt.show()
 
-    spread_data = pd.concat([data_join, pct_in_day['spread_pct'], point_in_day['spread_point']], axis=1)
+    spread_data = pd.concat([data_df, pct_in_day['spread_pct'], point_in_day['spread_point']], axis=1)
 
     return spread_data
 
@@ -84,6 +84,3 @@ if __name__ == '__main__':
 
     plt.plot(Data['spread_pct'])
     plt.show()
-
-    # trade_date = '20200416'
-    # contract_list = ('IF2004', 'IH2004')
