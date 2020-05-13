@@ -28,7 +28,8 @@ if __name__ == '__main__':
         print(year_id)
         endDate = str(year_id) + endBenchDate
         endDate = rq.get_previous_trading_date(rq.get_next_trading_date(endDate))
-        startDate = rq.get_previous_trading_date(endDate, n=dateLen)
         # startDate = rq.get_previous_trading_date(endDate, n=dateLen)
+        startDate = str(year_id) + startBenchDate
+        startDate = rq.get_previous_trading_date(rq.get_next_trading_date(startDate))
 
         Data = calendarArbitrage.dataLoad.data_load(contractList, start_date=startDate, end_date=endDate)
