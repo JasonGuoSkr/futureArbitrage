@@ -18,14 +18,17 @@ if __name__ == '__main__':
 
     # 参数
     dateLen = 10
-    benchDate = '0430'
+    startBenchDate = '0420'
+    endBenchDate = '0430'
     contractList = ('000016.XSHG', '000300.XSHG','000905.XSHG', '000852.XSHG', '399006.XSHE')
 
     # 计算
     for year_id in range(2011, 2021):
+        # year_id = 2011
         print(year_id)
-        endDate = str(year_id) + benchDate
-        endDate = rq.get_next_trading_date(rq.get_previous_trading_date(endDate))
+        endDate = str(year_id) + endBenchDate
+        endDate = rq.get_previous_trading_date(rq.get_next_trading_date(endDate))
         startDate = rq.get_previous_trading_date(endDate, n=dateLen)
+        # startDate = rq.get_previous_trading_date(endDate, n=dateLen)
 
         Data = calendarArbitrage.dataLoad.data_load(contractList, start_date=startDate, end_date=endDate)
