@@ -46,7 +46,7 @@ if __name__ == '__main__':
     startDate = '20200302'
     endDate = '20200409'
 
-    contractList = ('000016.XSHG', '000905.XSHG')
+    contractList = ('000016.XSHG', '000300.XSHG','000905.XSHG', '000852.XSHG', '399006.XSHE')
     # contractList = ('IF2003', 'IF2004')
     # contractList = 'IF2003'
 
