@@ -33,3 +33,11 @@ if __name__ == '__main__':
         startDate = rq.get_previous_trading_date(rq.get_next_trading_date(startDate))
 
         Data = calendarArbitrage.dataLoad.data_load(contractList, start_date=startDate, end_date=endDate)
+
+        dataDf = pd.DataFrame()
+        for contract_id in contractList:
+            dataClose = Data[contract_id]['close']
+            dataDf = pd.concat([dataDf, dataClose], axis=1)
+        dataDf.columns = contractList
+
+        pctChangeDf = dataDf / dataDf.iloc[0, :]
