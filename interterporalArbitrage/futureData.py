@@ -8,7 +8,7 @@ import rqdatac as rq
 """
 
 
-def future_data_load(args, start_date, end_date):
+def future_data_load(args, start_date=None, end_date=None):
     """
     期货分钟数据
     :param args: 合约list or 合约str

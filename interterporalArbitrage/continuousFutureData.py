@@ -11,8 +11,13 @@ import rqdatac as rq
 """
 
 
-def continuous_future_data(underlying_symbol, start_date=None, end_date=None, rule=1, rank=0):
-    contract_series = rq.futures.get_dominant(underlying_symbol, start_date=None, end_date=None, rule=0)
+def continuous_future_data(underlying_symbol, start_date=None, end_date=None, rule=1, rank=1):
+    contract_series = rq.futures.get_dominant(underlying_symbol, start_date, end_date, rule, rank)
+
+    for date_id in contract_series.index:
+
+
+    return contract_series
 
 
 if __name__ == '__main__':
@@ -22,4 +27,4 @@ if __name__ == '__main__':
     endDate = '20200409'
     underlyingSymbol = 'IF'
 
-    contractSeries = rq.futures.get_dominant('IF', start_date='20200102', end_date='20200409', rule=0, rank=1)
+    contractSeries = continuous_future_data(underlyingSymbol, start_date=startDate, end_date=endDate, rule=1, rank=1)

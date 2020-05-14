@@ -10,12 +10,13 @@ import matplotlib.pyplot as plt
 import interterporalArbitrage.futureData
 import rqdatac as rq
 
+
 """
 期货价差计算
 """
 
 
-def spread_compute(contract_list, start_date, end_date):
+def spread_compute(contract_list, start_date=None, end_date=None):
     """
     跨期期货价差计算
     :param contract_list:
