@@ -3,6 +3,7 @@
 
 import datetime
 import pandas as pd
+import interterporalArbitrage.futureData
 import rqdatac as rq
 
 
@@ -14,10 +15,14 @@ import rqdatac as rq
 def continuous_future_data(underlying_symbol, start_date=None, end_date=None, rule=1, rank=1):
     contract_series = rq.futures.get_dominant(underlying_symbol, start_date, end_date, rule, rank)
 
+    continuous_data = pd.DataFrame()
     for date_id in contract_series.index:
+        contract_id = contract_series[date_id]
+        contract_data = interterporalArbitrage.futureData.future_data_load(contract_id,
+                                                                           start_date=date_id, end_date=date_id)
+        continuous_data = pd.concat([continuous_data, contract_data], axis=0)
 
-
-    return contract_series
+    return continuous_data
 
 
 if __name__ == '__main__':
