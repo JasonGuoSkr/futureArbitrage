@@ -5,7 +5,6 @@ import pandas as pd
 import plotly
 import plotly.graph_objs as go
 from plotly.offline import init_notebook_mode,iplot
-init_notebook_mode(connected=True)
 import intercommodityArbitrage.futureData
 import rqdatac as rq
 
@@ -71,6 +70,7 @@ def spread_compute(start_date, end_date, contract_list):
 
 if __name__ == '__main__':
     rq.init("ricequant", "8ricequant8", ('10.29.135.119', 16010))
+    # init_notebook_mode(connected=True)
 
     # 参数
     tradeDate = '20200416'
@@ -84,5 +84,14 @@ if __name__ == '__main__':
     # Data = futureData.future_data_load(contractList, start_date=startDate, end_date=endDate)
     Data = spread_compute(startDate, endDate, contractList)
 
-    plt.plot(Data['spread_point'])
-    plt.show()
+    # data = [go.Scatter(x=Data.index.strftime("%Y-%m-%d %H:%M:%S.%f"), y=Data['IF2004_last'], name='IF'),
+    #         go.Scatter(x=Data.index.strftime("%Y-%m-%d %H:%M:%S.%f"), y=Data['IH2004_last'], name='IC')]
+    data = go.Scatter(x=Data.index.strftime("%Y-%m-%d %H:%M:%S.%f"), y=Data['spread_point'])
+
+    layout = go.Layout(title='金融股价的变化趋势')
+    fig = go.Figure(data=data, layout=layout)
+
+    fig.update_layout(
+        xaxis_type="category")
+    fig.show()
+
