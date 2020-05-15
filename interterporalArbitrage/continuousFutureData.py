@@ -20,7 +20,7 @@ def continuous_future_data(underlying_symbol, start_date=None, end_date=None, ru
         contract_id = contract_series[date_id]
         contract_data = interterporalArbitrage.futureData.future_data_load(contract_id,
                                                                            start_date=date_id, end_date=date_id)
-        continuous_data = pd.concat([continuous_data, contract_data], axis=0)
+        continuous_data = pd.concat([continuous_data, contract_data[contract_id]], axis=0)
 
     return continuous_data
 
