@@ -1,12 +1,14 @@
+# @Time    : 2020/5/15 9:14
+# @Author  : GUO LULU
+
 import os
 import time
 import numpy as np
 import pandas as pd
-import plotly
-import plotly.graph_objs as go
-from plotly.offline import init_notebook_mode,iplot
-init_notebook_mode(connected=True)
+import datetime
+import matplotlib.pyplot as plt
 import intercommodityArbitrage.futureData
+import statsmodels.api as sm
 import rqdatac as rq
 
 
