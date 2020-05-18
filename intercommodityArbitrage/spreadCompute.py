@@ -2,8 +2,8 @@ import os
 import time
 import numpy as np
 import pandas as pd
-import plotly
 import plotly.graph_objs as go
+from plotly.subplots import make_subplots
 from plotly.offline import init_notebook_mode,iplot
 import intercommodityArbitrage.futureData
 import rqdatac as rq
@@ -36,18 +36,16 @@ def daily_compute(trade_date, contract_list):
     #
     # data_log['spread_log'] = ols_factor.iloc[:, -1] - ols_factor.iloc[:, :-1] * param_series
 
-    # 日内收益
+    # 日内收益率差值
     pct_in_day = data_df / data_df.iloc[0, :]
+    pct_in_day.columns = [contract_id + '_std' for contract_id in contract_list]
     pct_in_day['spread_pct'] = pct_in_day.iloc[:, 0] - pct_in_day.iloc[:, 1]
-    # pct_in_day.index = pct_in_day.index.strftime('%Y-%m-%d %H:%m:%s:%f')
 
+    # 日内点位差值
     point_in_day = data_df - data_df.iloc[0, :]
     point_in_day['spread_point'] = point_in_day.iloc[:, 0] - point_in_day.iloc[:, 1]
 
-    # plt.plot(pct_in_day['spread_pct'])
-    # plt.show()
-
-    spread_data = pd.concat([data_df, pct_in_day['spread_pct'], point_in_day['spread_point']], axis=1)
+    spread_data = pd.concat([data_df, pct_in_day, point_in_day['spread_point']], axis=1)
 
     return spread_data
 
@@ -70,7 +68,6 @@ def spread_compute(start_date, end_date, contract_list):
 
 if __name__ == '__main__':
     rq.init("ricequant", "8ricequant8", ('10.29.135.119', 16010))
-    # init_notebook_mode(connected=True)
 
     # 参数
     tradeDate = '20200416'
@@ -86,12 +83,39 @@ if __name__ == '__main__':
 
     # data = [go.Scatter(x=Data.index.strftime("%Y-%m-%d %H:%M:%S.%f"), y=Data['IF2004_last'], name='IF'),
     #         go.Scatter(x=Data.index.strftime("%Y-%m-%d %H:%M:%S.%f"), y=Data['IH2004_last'], name='IC')]
-    data = go.Scatter(x=Data.index.strftime("%Y-%m-%d %H:%M:%S.%f"), y=Data['spread_point'])
+    # data = go.Scatter(x=Data.index.strftime("%Y-%m-%d %H:%M:%S.%f"), y=Data['spread_point'])
+    # layout = go.Layout(title='金融股价的变化趋势')
+    # fig = go.Figure(data=data, layout=layout)
+    # fig.update_layout(xaxis_type="category")
+    # fig.show()
 
-    layout = go.Layout(title='金融股价的变化趋势')
-    fig = go.Figure(data=data, layout=layout)
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    fig.add_trace(
+        go.Scatter(x=Data.index.strftime("%Y-%m-%d %H:%M:%S.%f"), y=Data[contractList[0] + '_std'], name=contractList[0]),
+        secondary_y=False,
+    )
 
+    fig.add_trace(
+        go.Scatter(x=Data.index.strftime("%Y-%m-%d %H:%M:%S.%f"), y=Data[contractList[1] + '_std'], name=contractList[1]),
+        secondary_y=False,
+    )
+
+    fig.add_trace(
+        go.Scatter(x=Data.index.strftime("%Y-%m-%d %H:%M:%S.%f"), y=Data['spread_pct'], name='spread'),
+        secondary_y=True,
+    )
+
+    # Add figure title
     fig.update_layout(
-        xaxis_type="category")
-    fig.show()
+        title_text="price_spread"
+    )
 
+    # Set x-axis title
+    fig.update_xaxes(title_text="datetime")
+
+    # Set y-axes titles
+    fig.update_yaxes(title_text="<b>price</b>", secondary_y=False)
+    fig.update_yaxes(title_text="<b>spread</b>", secondary_y=True)
+    fig.update_layout(xaxis_type="category")
+
+    fig.show()
