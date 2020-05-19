@@ -72,10 +72,10 @@ if __name__ == '__main__':
     # 参数
     tradeDate = '20200416'
 
-    startDate = '20200413'
-    endDate = '20200417'
+    startDate = '20200511'
+    endDate = '20200514'
 
-    contractList = ('IF2004', 'IH2004')
+    contractList = ('IF2005', 'IH2005')
     # contractList = 'IF2003'
 
     # Data = futureData.future_data_load(contractList, start_date=startDate, end_date=endDate)
