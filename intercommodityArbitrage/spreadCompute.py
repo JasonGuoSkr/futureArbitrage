@@ -70,9 +70,9 @@ if __name__ == '__main__':
     rq.init("ricequant", "8ricequant8", ('10.29.135.119', 16010))
 
     # 参数
-    tradeDate = '20200416'
+    # tradeDate = '20200416'
 
-    startDate = '20200511'
+    startDate = '20200514'
     endDate = '20200514'
 
     contractList = ('IF2005', 'IH2005')

@@ -19,9 +19,9 @@ import rqdatac as rq
 
 
 def trading_data(contract_list, start_date, end_date):
-    # 数据加载
     data_load = intercommodityArbitrage.futureData.future_data_load(contract_list, start_date=start_date,
                                                                     end_date=end_date)
+
     data_df = pd.DataFrame()
     data_df['trading_date'] = data_load[contract_list[0]]['trading_date']
     columns_list = ['last', 'a1', 'b1']
@@ -50,6 +50,5 @@ if __name__ == '__main__':
 
     for date in dateList:
         # date = dateList[0]
-        for contractID in contractList:
-            # contractID = contractList[0]
-            contractData = futureData[contractID]
+        dailyData = futureData[futureData['trading_date'] == date]
+
