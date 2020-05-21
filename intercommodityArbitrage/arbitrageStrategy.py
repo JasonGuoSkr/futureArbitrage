@@ -40,6 +40,7 @@ if __name__ == '__main__':
     startDate = '20200511'
     endDate = '20200514'
     contractList = ('IF2005', 'IH2005')
+    dateLen = 600
 
     # 数据加载
     futureData = trading_data(contractList, start_date=startDate, end_date=endDate)
@@ -50,5 +51,8 @@ if __name__ == '__main__':
 
     for date in dateList:
         # date = dateList[0]
-        dailyData = futureData[futureData['trading_date'] == date]
+        dailyTradingData = futureData[futureData['trading_date'] == date]
+        dailySpreadData = spreadData[futureData['trading_date'] == date]
 
+        for id in range(dateLen, dailySpreadData.shape[0]):
+            print(id)
