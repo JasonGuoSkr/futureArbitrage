@@ -51,11 +51,13 @@ if __name__ == '__main__':
     posPar = 0
 
     dateList = rq.get_trading_dates(startDate, endDate)
-
     for date in dateList:
         # date = dateList[0]
         dailyTradingData = futureData[futureData['trading_date'] == date]
         dailySpreadData = spreadData[futureData['trading_date'] == date]
+        dailyParData = dailySpreadData[['spread_pct', 'spread_point']]
+        dailyParData['position'] = 0
+
 
         for order in range(dateLen, dailySpreadData.shape[0]):
             # order = dateLen
