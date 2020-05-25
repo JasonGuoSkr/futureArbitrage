@@ -56,8 +56,7 @@ if __name__ == '__main__':
         dailyTradingData = futureData[futureData['trading_date'] == date]
         dailySpreadData = spreadData[futureData['trading_date'] == date]
         dailyParData = dailySpreadData[['spread_pct', 'spread_point']]
-        dailyParData['position'] = 0
-
+        dailyParData.loc[:, 'position'] = np.zeros(dailySpreadData.shape[0])
 
         for order in range(dateLen, dailySpreadData.shape[0]):
             # order = dateLen
