@@ -57,14 +57,16 @@ if __name__ == '__main__':
         dailyTradingData = futureData[futureData['trading_date'] == date]
         dailySpreadData = spreadData[futureData['trading_date'] == date]
 
-        for id in range(dateLen, dailySpreadData.shape[0]):
-            # id = dateLen
-            dataSeries = dailySpreadData.iloc[id-dateLen:id, 4]
+        for order in range(dateLen, dailySpreadData.shape[0]):
+            # order = dateLen
+            dataSeries = dailySpreadData.iloc[order-dateLen:order, 4]
             # temp1 = np.maximum.accumulate(dataSeries)
             # temp2 = dataSeries.idxmax()
             # temp3 = dataSeries.idxmin()
             maxID = np.max(dataSeries)
             minID = np.min(dataSeries)
 
-            if max((dataSeries.iloc[-1] - minID), (maxID - dataSeries.iloc[-1])) > diffPar:
+            if (max((dataSeries.iloc[-1] - minID), (maxID - dataSeries.iloc[-1])) > diffPar) and (posPar == 0):
                 dataSeries.iloc[-1]
+            else:
+                pass
