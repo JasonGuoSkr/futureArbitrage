@@ -40,13 +40,16 @@ if __name__ == '__main__':
     startDate = '20200511'
     endDate = '20200514'
     contractList = ('IF2005', 'IH2005')
-    dateLen = 600
+    dateLen = 60
+    diffPar = 0.01
 
     # 数据加载
     futureData = trading_data(contractList, start_date=startDate, end_date=endDate)
     spreadData = intercommodityArbitrage.spreadCompute.spread_compute(startDate, endDate, contractList)
 
-    #
+    # 逐tick回测
+    posPar = 0
+
     dateList = rq.get_trading_dates(startDate, endDate)
 
     for date in dateList:
@@ -55,4 +58,13 @@ if __name__ == '__main__':
         dailySpreadData = spreadData[futureData['trading_date'] == date]
 
         for id in range(dateLen, dailySpreadData.shape[0]):
-            print(id)
+            # id = dateLen
+            dataSeries = dailySpreadData.iloc[id-dateLen:id, 4]
+            # temp1 = np.maximum.accumulate(dataSeries)
+            # temp2 = dataSeries.idxmax()
+            # temp3 = dataSeries.idxmin()
+            maxID = np.max(dataSeries)
+            minID = np.min(dataSeries)
+
+            if max((dataSeries.iloc[-1] - minID), (maxID - dataSeries.iloc[-1])) > diffPar:
+                dataSeries.iloc[-1]
