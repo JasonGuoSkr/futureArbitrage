@@ -48,12 +48,12 @@ if __name__ == '__main__':
     spreadData = intercommodityArbitrage.spreadCompute.spread_compute(startDate, endDate, contractList)
 
     # 逐tick回测
-    holdPar = False
-    posPar = 0
-
     dateList = rq.get_trading_dates(startDate, endDate)
     for date in dateList:
         # date = dateList[0]
+        holdPar = False
+        posPar = 0
+
         dailyTradingData = futureData[futureData['trading_date'] == date]
         dailySpreadData = spreadData[futureData['trading_date'] == date]
         dailyParData = dailySpreadData[['spread_pct', 'spread_point']]
