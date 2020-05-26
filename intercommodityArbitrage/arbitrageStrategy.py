@@ -83,4 +83,24 @@ if __name__ == '__main__':
                     holdPar = True
             else:
                 pass
+                # if mspread[i] >= stop and hold_state == -1:
+                #     profit = (hold_price_A - price_A[i]) + (price_B[i] - hold_price_B)
+                #     profit_sum += profit
+                #     hold_state = 0
+                #     hold = False
+                # if mspread[i] <= -stop and hold_state == 1:
+                #     profit = (price_A[i] - hold_price_A) + (hold_price_B - price_B[i])
+                #     profit_sum += profit
+                #     hold_state = 0
+                #     hold = False
+                # if mspread[i] <= 0 and hold_state == -1:
+                #     profit = (hold_price_A - price_A[i]) + (price_B[i] - hold_price_B)
+                #     profit_sum += profit
+                #     hold_state = 0
+                #     hold = False
+                # if mspread[i] >= 0 and hold_state == 1:
+                #     profit = (price_A[i] - hold_price_A) + (hold_price_B - price_B[i])
+                #     profit_sum += profit
+                #     hold_state = 0
+                #     hold = False
 
