@@ -48,6 +48,8 @@ if __name__ == '__main__':
     spreadData = intercommodityArbitrage.spreadCompute.spread_compute(startDate, endDate, contractList)
 
     # 逐tick回测
+    stopPar = 0.005
+
     dateList = rq.get_trading_dates(startDate, endDate)
     for date in dateList:
         # date = dateList[0]
@@ -71,11 +73,14 @@ if __name__ == '__main__':
 
             if not holdPar:
                 if (dataSeries.iloc[-1] - minID >= diffPar) and (maxID - dataSeries.iloc[-1] >= diffPar):
-                    pass
+                    posPar = -1
+                    holdPar = True
                 elif (dataSeries.iloc[-1] - minID >= diffPar) and (maxID - dataSeries.iloc[-1] < diffPar):
-                    pass
+                    posPar = -1
+                    holdPar = True
                 elif (dataSeries.iloc[-1] - minID < diffPar) and (maxID - dataSeries.iloc[-1] >= diffPar):
-                    pass
+                    posPar = -1
+                    holdPar = True
             else:
                 pass
 
