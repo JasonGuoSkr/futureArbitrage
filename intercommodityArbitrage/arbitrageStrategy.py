@@ -48,6 +48,7 @@ if __name__ == '__main__':
     spreadData = intercommodityArbitrage.spreadCompute.spread_compute(startDate, endDate, contractList)
 
     # 逐tick回测
+    holdPar = False
     posPar = 0
 
     dateList = rq.get_trading_dates(startDate, endDate)
@@ -56,6 +57,7 @@ if __name__ == '__main__':
         dailyTradingData = futureData[futureData['trading_date'] == date]
         dailySpreadData = spreadData[futureData['trading_date'] == date]
         dailyParData = dailySpreadData[['spread_pct', 'spread_point']]
+        # dailyParData['position'] = np.zeros(dailySpreadData.shape[0])
         dailyParData.loc[:, 'position'] = np.zeros(dailySpreadData.shape[0])
 
         for order in range(dateLen, dailySpreadData.shape[0]):
@@ -67,7 +69,13 @@ if __name__ == '__main__':
             maxID = np.max(dataSeries)
             minID = np.min(dataSeries)
 
-            if (max((dataSeries.iloc[-1] - minID), (maxID - dataSeries.iloc[-1])) > diffPar) and (posPar == 0):
-                dataSeries.iloc[-1]
+            if not holdPar:
+                if (dataSeries.iloc[-1] - minID >= diffPar) and (maxID - dataSeries.iloc[-1] >= diffPar):
+                    pass
+                elif (dataSeries.iloc[-1] - minID >= diffPar) and (maxID - dataSeries.iloc[-1] < diffPar):
+                    pass
+                elif (dataSeries.iloc[-1] - minID < diffPar) and (maxID - dataSeries.iloc[-1] >= diffPar):
+                    pass
             else:
                 pass
+
