@@ -48,13 +48,13 @@ if __name__ == '__main__':
     spreadData = intercommodityArbitrage.spreadCompute.spread_compute(startDate, endDate, contractList)
 
     # 逐tick回测
-    stopPar = 0.005
-
     dateList = rq.get_trading_dates(startDate, endDate)
     for date in dateList:
         # date = dateList[0]
         holdPar = False
         posPar = 0
+        stopPar = 0.005
+        openSpread = 0
 
         dailyTradingData = futureData[futureData['trading_date'] == date]
         dailySpreadData = spreadData[futureData['trading_date'] == date]
@@ -73,34 +73,36 @@ if __name__ == '__main__':
 
             if not holdPar:
                 if (dataSeries.iloc[-1] - minID >= diffPar) and (maxID - dataSeries.iloc[-1] >= diffPar):
-                    posPar = -1
                     holdPar = True
+                    if dataSeries.iloc[-1] - dataSeries.iloc[0] >= 0:
+                        posPar = -1
+                    else:
+                        posPar = 1
                 elif (dataSeries.iloc[-1] - minID >= diffPar) and (maxID - dataSeries.iloc[-1] < diffPar):
                     posPar = -1
                     holdPar = True
                 elif (dataSeries.iloc[-1] - minID < diffPar) and (maxID - dataSeries.iloc[-1] >= diffPar):
-                    posPar = -1
+                    posPar = 1
                     holdPar = True
             else:
-                pass
-                # if mspread[i] >= stop and hold_state == -1:
-                #     profit = (hold_price_A - price_A[i]) + (price_B[i] - hold_price_B)
-                #     profit_sum += profit
-                #     hold_state = 0
-                #     hold = False
-                # if mspread[i] <= -stop and hold_state == 1:
-                #     profit = (price_A[i] - hold_price_A) + (hold_price_B - price_B[i])
-                #     profit_sum += profit
-                #     hold_state = 0
-                #     hold = False
-                # if mspread[i] <= 0 and hold_state == -1:
-                #     profit = (hold_price_A - price_A[i]) + (price_B[i] - hold_price_B)
-                #     profit_sum += profit
-                #     hold_state = 0
-                #     hold = False
-                # if mspread[i] >= 0 and hold_state == 1:
-                #     profit = (price_A[i] - hold_price_A) + (hold_price_B - price_B[i])
-                #     profit_sum += profit
-                #     hold_state = 0
-                #     hold = False
+                if mspread[i] >= stopPar and posPar == -1:
+                    profit = (hold_price_A - price_A[i]) + (price_B[i] - hold_price_B)
+                    profit_sum += profit
+                    hold_state = 0
+                    hold = False
+                if mspread[i] <= -stop and hold_state == 1:
+                    profit = (price_A[i] - hold_price_A) + (hold_price_B - price_B[i])
+                    profit_sum += profit
+                    hold_state = 0
+                    hold = False
+                if mspread[i] <= 0 and hold_state == -1:
+                    profit = (hold_price_A - price_A[i]) + (price_B[i] - hold_price_B)
+                    profit_sum += profit
+                    hold_state = 0
+                    hold = False
+                if mspread[i] >= 0 and hold_state == 1:
+                    profit = (price_A[i] - hold_price_A) + (hold_price_B - price_B[i])
+                    profit_sum += profit
+                    hold_state = 0
+                    hold = False
 
