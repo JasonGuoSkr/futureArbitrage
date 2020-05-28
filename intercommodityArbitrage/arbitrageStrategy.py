@@ -54,6 +54,7 @@ if __name__ == '__main__':
         holdPar = False
         posPar = 0
         stopPar = 0.005
+        closePar = 0.01
         openSpread = 0
 
         dailyTradingData = futureData[futureData['trading_date'] == date]
@@ -70,22 +71,26 @@ if __name__ == '__main__':
             # temp3 = dataSeries.idxmin()
             maxID = np.max(dataSeries)
             minID = np.min(dataSeries)
+            lastSpread = dataSeries.iloc[-1]
 
             if not holdPar:
-                if (dataSeries.iloc[-1] - minID >= diffPar) and (maxID - dataSeries.iloc[-1] >= diffPar):
+                if (lastSpread - minID >= diffPar) and (maxID - lastSpread >= diffPar):
                     holdPar = True
-                    if dataSeries.iloc[-1] - dataSeries.iloc[0] >= 0:
+                    openSpread = lastSpread
+                    if lastSpread - dataSeries.iloc[0] >= 0:
                         posPar = -1
                     else:
                         posPar = 1
-                elif (dataSeries.iloc[-1] - minID >= diffPar) and (maxID - dataSeries.iloc[-1] < diffPar):
+                elif (lastSpread - minID >= diffPar) and (maxID - lastSpread < diffPar):
+                    openSpread = lastSpread
                     posPar = -1
                     holdPar = True
-                elif (dataSeries.iloc[-1] - minID < diffPar) and (maxID - dataSeries.iloc[-1] >= diffPar):
+                elif (lastSpread - minID < diffPar) and (maxID - lastSpread >= diffPar):
+                    openSpread = lastSpread
                     posPar = 1
                     holdPar = True
             else:
-                if mspread[i] >= stopPar and posPar == -1:
+                if lastSpread >= stopPar and posPar == -1:
                     profit = (hold_price_A - price_A[i]) + (price_B[i] - hold_price_B)
                     profit_sum += profit
                     hold_state = 0
