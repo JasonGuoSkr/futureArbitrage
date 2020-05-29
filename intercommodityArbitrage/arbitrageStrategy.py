@@ -48,12 +48,15 @@ if __name__ == '__main__':
     spreadData = intercommodityArbitrage.spreadCompute.spread_compute(startDate, endDate, contractList)
 
     # 逐tick回测
+    tradeDetails = pd.DataFrame(columns=['openTime', 'closeTime', 'tradeDirection', 'openSpread', 'closeSpread'])
+    countNum = -1
+
     dateList = rq.get_trading_dates(startDate, endDate)
     for date in dateList:
         # date = dateList[0]
         holdPar = False
         posPar = 0
-        stopPar = 0.005
+        stopPar = -0.005
         closePar = 0.01
         openSpread = 0
 
@@ -69,14 +72,15 @@ if __name__ == '__main__':
             # temp1 = np.maximum.accumulate(dataSeries)
             # temp2 = dataSeries.idxmax()
             # temp3 = dataSeries.idxmin()
+            lastSpread = dataSeries.iloc[-1]
             maxID = np.max(dataSeries)
             minID = np.min(dataSeries)
-            lastSpread = dataSeries.iloc[-1]
 
             if not holdPar:
                 if (lastSpread - minID >= diffPar) and (maxID - lastSpread >= diffPar):
-                    holdPar = True
                     openSpread = lastSpread
+                    holdPar = True
+                    countNum += 1
                     if lastSpread - dataSeries.iloc[0] >= 0:
                         posPar = -1
                     else:
@@ -85,14 +89,15 @@ if __name__ == '__main__':
                     openSpread = lastSpread
                     posPar = -1
                     holdPar = True
+                    countNum += 1
                 elif (lastSpread - minID < diffPar) and (maxID - lastSpread >= diffPar):
                     openSpread = lastSpread
                     posPar = 1
                     holdPar = True
+                    countNum += 1
             else:
-                if (openSpread - lastSpread >= stopPar) and (posPar == -1):
-                    data = d
-                    profit = (hold_price_A - price_A[i]) + (price_B[i] - hold_price_B)
+                if (lastSpread - openSpread <= stopPar) and (posPar == -1):
+                    profitSpread = lastSpread - openSpread
                     profit_sum += profit
                     hold_state = 0
                     hold = False
