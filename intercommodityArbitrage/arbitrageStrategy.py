@@ -62,9 +62,8 @@ if __name__ == '__main__':
 
         dailyTradingData = futureData[futureData['trading_date'] == date]
         dailySpreadData = spreadData[futureData['trading_date'] == date]
-        dailyParData = dailySpreadData[['spread_pct', 'spread_point']]
-        # dailyParData['position'] = np.zeros(dailySpreadData.shape[0])
-        dailyParData.loc[:, 'position'] = np.zeros(dailySpreadData.shape[0])
+        # dailyParData = dailySpreadData[['spread_pct', 'spread_point']]
+        # dailyParData.loc[:, 'position'] = np.zeros(dailySpreadData.shape[0])
 
         for order in range(dateLen, dailySpreadData.shape[0]):
             # order = dateLen
@@ -85,16 +84,25 @@ if __name__ == '__main__':
                         posPar = -1
                     else:
                         posPar = 1
+                    tradeDetails.loc[countNum, 'openTime'] = dataSeries.index[-1]
+                    tradeDetails.loc[countNum, 'tradeDirection'] = posPar
+                    tradeDetails.loc[countNum, 'openSpread'] = openSpread
                 elif (lastSpread - minID >= diffPar) and (maxID - lastSpread < diffPar):
                     openSpread = lastSpread
                     posPar = -1
                     holdPar = True
                     countNum += 1
+                    tradeDetails.loc[countNum, 'openTime'] = dataSeries.index[-1]
+                    tradeDetails.loc[countNum, 'tradeDirection'] = posPar
+                    tradeDetails.loc[countNum, 'openSpread'] = openSpread
                 elif (lastSpread - minID < diffPar) and (maxID - lastSpread >= diffPar):
                     openSpread = lastSpread
                     posPar = 1
                     holdPar = True
                     countNum += 1
+                    tradeDetails.loc[countNum, 'openTime'] = dataSeries.index[-1]
+                    tradeDetails.loc[countNum, 'tradeDirection'] = posPar
+                    tradeDetails.loc[countNum, 'openSpread'] = openSpread
             else:
                 if (lastSpread - openSpread <= stopPar) and (posPar == -1):
                     profitSpread = lastSpread - openSpread
