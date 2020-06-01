@@ -41,23 +41,25 @@ if __name__ == '__main__':
     endDate = '20200514'
     contractList = ('IF2005', 'IH2005')
     dateLen = 60
-    diffPar = 0.01
+    diffPar = 0.002
 
     # 数据加载
     futureData = trading_data(contractList, start_date=startDate, end_date=endDate)
     spreadData = intercommodityArbitrage.spreadCompute.spread_compute(startDate, endDate, contractList)
 
     # 逐tick回测
-    tradeDetails = pd.DataFrame(columns=['openTime', 'closeTime', 'tradeDirection', 'openSpread', 'closeSpread'])
+    tradeDetails = pd.DataFrame(columns=['openTime', 'closeTime', 'tradeDirection',
+                                         'openSpread', 'closeSpread', 'profitSpread'])
     countNum = -1
 
     dateList = rq.get_trading_dates(startDate, endDate)
     for date in dateList:
         # date = dateList[0]
+        print(date)
         holdPar = False
         posPar = 0
-        stopPar = -0.005
-        closePar = 0.01
+        stopPar = -0.001
+        closePar = 0.001
         openSpread = 0
 
         dailyTradingData = futureData[futureData['trading_date'] == date]
@@ -65,7 +67,7 @@ if __name__ == '__main__':
         # dailyParData = dailySpreadData[['spread_pct', 'spread_point']]
         # dailyParData.loc[:, 'position'] = np.zeros(dailySpreadData.shape[0])
 
-        for order in range(dateLen, dailySpreadData.shape[0]):
+        for order in range(dateLen, dailySpreadData.shape[0]-1):
             # order = dateLen
             dataSeries = dailySpreadData.iloc[order-dateLen:order, 4]
             # temp1 = np.maximum.accumulate(dataSeries)
@@ -104,25 +106,45 @@ if __name__ == '__main__':
                     tradeDetails.loc[countNum, 'tradeDirection'] = posPar
                     tradeDetails.loc[countNum, 'openSpread'] = openSpread
             else:
-                if (lastSpread - openSpread <= stopPar) and (posPar == -1):
-                    profitSpread = lastSpread - openSpread
-                    profit_sum += profit
-                    hold_state = 0
-                    hold = False
-                if (lastSpread - openSpread >= stopPar) and (posPar == 1):
+                profitSpread = lastSpread - openSpread
+                if (profitSpread <= -closePar) and (posPar == -1):
+                    tradeDetails.loc[countNum, 'closeTime'] = dataSeries.index[-1]
+                    tradeDetails.loc[countNum, 'closeSpread'] = lastSpread
+                    tradeDetails.loc[countNum, 'profitSpread'] = -profitSpread
+                    posPar = 0
+                    holdPar = False
+                if (profitSpread >= -stopPar) and (posPar == -1):
+                    tradeDetails.loc[countNum, 'closeTime'] = dataSeries.index[-1]
+                    tradeDetails.loc[countNum, 'closeSpread'] = lastSpread
+                    tradeDetails.loc[countNum, 'profitSpread'] = -profitSpread
+                    posPar = 0
+                    holdPar = False
+                if (profitSpread >= closePar) and (posPar == 1):
+                    tradeDetails.loc[countNum, 'closeTime'] = dataSeries.index[-1]
+                    tradeDetails.loc[countNum, 'closeSpread'] = lastSpread
+                    tradeDetails.loc[countNum, 'profitSpread'] = profitSpread
+                    posPar = 0
+                    holdPar = False
+                if (profitSpread <= stopPar) and (posPar == 1):
+                    tradeDetails.loc[countNum, 'closeTime'] = dataSeries.index[-1]
+                    tradeDetails.loc[countNum, 'closeSpread'] = lastSpread
+                    tradeDetails.loc[countNum, 'profitSpread'] = profitSpread
+                    posPar = 0
+                    holdPar = False
 
-                    profit = (price_A[i] - hold_price_A) + (hold_price_B - price_B[i])
-                    profit_sum += profit
-                    hold_state = 0
-                    hold = False
-                if (lastSpread - openSpread >= stopPar) and (posPar == 1):
-                    profit = (hold_price_A - price_A[i]) + (price_B[i] - hold_price_B)
-                    profit_sum += profit
-                    hold_state = 0
-                    hold = False
-                if (lastSpread - openSpread >= stopPar) and (posPar == 1):
-                    profit = (price_A[i] - hold_price_A) + (hold_price_B - price_B[i])
-                    profit_sum += profit
-                    hold_state = 0
-                    hold = False
-
+        if posPar == 1:
+            dataSeries = dailySpreadData.iloc[-dateLen:, 4]
+            lastSpread = dataSeries.iloc[-1]
+            tradeDetails.loc[countNum, 'closeTime'] = dataSeries.index[-1]
+            tradeDetails.loc[countNum, 'closeSpread'] = lastSpread
+            tradeDetails.loc[countNum, 'profitSpread'] = lastSpread - openSpread
+            posPar = 0
+            holdPar = False
+        elif posPar == -1:
+            dataSeries = dailySpreadData.iloc[-dateLen:, 4]
+            lastSpread = dataSeries.iloc[-1]
+            tradeDetails.loc[countNum, 'closeTime'] = dataSeries.index[-1]
+            tradeDetails.loc[countNum, 'closeSpread'] = lastSpread
+            tradeDetails.loc[countNum, 'profitSpread'] = openSpread - lastSpread
+            posPar = 0
+            holdPar = False
