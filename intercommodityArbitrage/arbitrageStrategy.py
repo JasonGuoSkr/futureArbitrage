@@ -59,7 +59,7 @@ def strategy(contract_list, start_date, end_date, date_len=1200, diff=0.0015, st
 
     # 逐tick回测，获取交易信号
     trade_details = pd.DataFrame(columns=['openTime', 'closeTime', 'tradeDirection',
-                                          'openSpread', 'closeSpread', 'profitSpread'])
+                                          'openSpread', 'closeSpread', 'profitSpread', 'profitTrade'])
     count_num = -1
 
     date_list = rq.get_trading_dates(start_date, end_date)
@@ -72,7 +72,6 @@ def strategy(contract_list, start_date, end_date, date_len=1200, diff=0.0015, st
         close_par = close
         open_spread = 0
 
-        daily_trading = future_data[future_data['trading_date'] == date]
         daily_spread = spread_data[future_data['trading_date'] == date]
 
         for order in range(1, daily_spread.shape[0] - 1):
@@ -154,8 +153,21 @@ def strategy(contract_list, start_date, end_date, date_len=1200, diff=0.0015, st
             trade_details.loc[count_num, 'profitSpread'] = open_spread - last_spread
 
     # 收益计算
-    trade_details = pd.DataFrame(columns=['openTime', 'closeTime', 'tradeDirection',
-                                          'openSpread', 'closeSpread', 'profitSpread'])
+    for order in trade_details.index:
+        open_time = trade_details.loc[order, 'openTime']
+        close_time = trade_details.loc[order, 'closeTime']
+        contract_0 = contract_list[0]
+        contract_1 = contract_list[1]
+        if trade_details.loc[order, 'tradeDirection'] == 1:
+            long_leg = (future_data.loc[close_time, contract_0] - future_data.loc[open_time, contract_0]) / \
+                       future_data.loc[open_time, contract_0]
+            short_leg = -(future_data.loc[close_time, contract_1] - future_data.loc[open_time, contract_1]) / \
+                        future_data.loc[open_time, contract_1]
+        else:
+            long_leg = (future_data.loc[close_time, contract_1] - future_data.loc[open_time, contract_1]) / \
+                       future_data.loc[open_time, contract_1]
+            short_leg = -(future_data.loc[close_time, contract_0] - future_data.loc[open_time, contract_0]) / \
+                        future_data.loc[open_time, contract_0]
 
     return trade_details
 
