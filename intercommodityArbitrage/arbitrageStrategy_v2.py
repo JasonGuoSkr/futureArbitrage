@@ -211,3 +211,4 @@ if __name__ == '__main__':
     tradeDetails = strategy(contractList, startDate, endDate, diff=diffPar,
                             stop=-0.0015, close=0.0015, open_len=dateLen, close_len=7200)
     tradeDetails['profitTrade'].mean()
+
