@@ -10,7 +10,11 @@ pythonFile:
     spreadCompute为期货价差计算分析 日内收益率价差 日内点位价差
     arbitrageStrategy为套利策略主程序 多版本
 
-module:
+model:
     开仓：短时间价差spread大幅波动 合约短时间大幅波动 合约勾头
     平仓：spread波幅止盈 持仓一定时间退出
     止损：spread波幅止损
+
+other ideas:
+    统计历史上spread的波动范围，样本外日内spread偏离幅度过大时，做价差回归
+    spread快速波动适合做价差回归，其他情况下适合做价差趋势
