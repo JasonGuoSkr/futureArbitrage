@@ -3,16 +3,16 @@
 """
 
 idea:
-    IH、IF、IC日内走势正相关 研究不同品种期货之间日内是否有快速回归的效应
+    IH、IF、IC日内走势正相关，研究不同品种期货之间日内是否有快速回归的效应
 
 pythonFile:
     futureData为期货tick数据加载
-    spreadCompute为期货价差计算分析 日内收益率价差 日内点位价差
-    arbitrageStrategy为套利策略主程序 多版本
+    spreadCompute为期货价差计算分析，日内收益率价差，日内点位价差
+    arbitrageStrategy为套利策略主程序，多版本
 
 model:
-    开仓：短时间价差spread大幅波动 合约短时间大幅波动 合约勾头
-    平仓：spread波幅止盈 持仓一定时间退出
+    开仓：短时间价差spread大幅波动，合约短时间大幅波动，合约勾头
+    平仓：spread波幅止盈，持仓一定时间退出
     止损：spread波幅止损
 
 other ideas:
