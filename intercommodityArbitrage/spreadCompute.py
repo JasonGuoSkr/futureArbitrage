@@ -22,7 +22,7 @@ def daily_compute(trade_date, contract_list):
     data_df = pd.DataFrame()
     for contract_id in contract_list:
         price_last = data_load[contract_id]['last']
-        price_last.name = contract_id + '_last'
+        price_last.name = contract_id[:2] + '_last'
         data_df = pd.concat([data_df, price_last], axis=1)
 
     # 价差计算
@@ -38,7 +38,7 @@ def daily_compute(trade_date, contract_list):
 
     # 日内收益率差值
     pct_in_day = data_df / data_df.iloc[0, :]
-    pct_in_day.columns = [contract_id + '_std' for contract_id in contract_list]
+    pct_in_day.columns = [contract_id[:2] + '_std' for contract_id in contract_list]
     pct_in_day['spread_pct'] = pct_in_day.iloc[:, 0] - pct_in_day.iloc[:, 1]
 
     # 日内点位差值
@@ -72,11 +72,12 @@ if __name__ == '__main__':
     # 参数
     # tradeDate = '20200416'
 
-    startDate = '20200514'
-    endDate = '20200514'
-
-    contractList = ('IF2005', 'IH2005')
-    # contractList = 'IF2003'
+    # startDate = '20200511'
+    # endDate = '20200514'
+    # contractList = ('IC2005', 'IH2005')
+    startDate = '20200518'
+    endDate = '20200531'
+    contractList = ('IF2006', 'IH2006')
 
     # Data = futureData.future_data_load(contractList, start_date=startDate, end_date=endDate)
     Data = spread_compute(startDate, endDate, contractList)
