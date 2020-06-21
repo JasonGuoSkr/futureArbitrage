@@ -30,6 +30,8 @@ def future_data_load(args, start_date, end_date):
                 except AttributeError:
                     print(contract_id)
                 else:
+                    daily_data.drop_duplicates(keep='first', inplace=True)
+                    # daily_data = daily_data.loc[~daily_data.index.duplicated(keep='first')]
                     daily_data = data_resample(daily_data)
                     data = pd.concat([data, daily_data], axis=0)
 
@@ -46,7 +48,7 @@ def data_resample(data, freq='500ms'):
     :return:
     """
     data = data.resample(freq).ffill()
-    data = data.between_time('09:31:00', '14:56:00')
+    data = data.between_time('09:30:30', '14:56:00')
 
     return data.between_time('13:00:00', '11:30:00')
 
