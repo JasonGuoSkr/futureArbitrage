@@ -59,7 +59,7 @@ def spread_analysis(underlying_list, start_date, end_date):
         except AttributeError:
             print(date_ind + '计算错误')
         else:
-            # print(date_ind)
+            print(date_ind)
             spread_data = pd.concat([spread_data, daily_data], axis=0)
             describe_data[date_ind] = daily_data['spread_pct'].describe()
 
