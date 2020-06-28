@@ -78,4 +78,3 @@ if __name__ == '__main__':
 
     Data = future_data_load(contractList, start_date=startDate, end_date=endDate)
     # initialTick = get_tick('IF2003', startDate, endDate)
-    # resampleTick = data_resample(initialTick, freq='500ms')
