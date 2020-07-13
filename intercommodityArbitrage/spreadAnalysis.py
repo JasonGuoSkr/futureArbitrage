@@ -70,9 +70,9 @@ if __name__ == '__main__':
     rq.init("ricequant", "8ricequant8", ('10.29.135.119', 16010))
 
     # 参数 回测区间及合约代码
-    startDate = '20200203'
-    endDate = '20200203'
-    underlyingList = ('IF', 'IH')
+    startDate = '20200601'
+    endDate = '20200701'
+    underlyingList = ('IC', 'IH')
 
     # start_date = startDate
     # end_date = endDate

@@ -48,7 +48,8 @@ def data_resample(data, freq='500ms'):
     :return:
     """
     data = data.resample(freq).ffill()
-    data = data.between_time('09:30:00', '15:00:00')
+    data = data.between_time('09:30:00', '14:59:00')
+    # data = data.between_time('09:30:00', '15:00:00')
 
     return data.between_time('13:00:00', '11:30:00')
 
