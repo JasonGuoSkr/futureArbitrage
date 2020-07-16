@@ -50,13 +50,14 @@ def trading_data(underlying_list, start_date, end_date):
     return price_data
 
 
-def strategy(underlying_list, start_date, end_date, diff=0.0015, stop=-0.001, close=0.001, open_len=1200, close_len=7200):
+def strategy(underlying_list, start_date, end_date, diff=0.0015, stop=-0.001, close=0.001,
+             open_len=1200, close_len=7200):
     # 数据加载
     future_data = trading_data(underlying_list, start_date=start_date, end_date=end_date)
     spread_data = intercommodityArbitrage.spreadAnalysis.spread_analysis(underlying_list, start_date, end_date)
 
     # 逐tick回测，获取交易信号
-    trade_details = pd.DataFrame(columns=['openTime', 'closeTime', 'tradeDirection',
+    trade_details = pd.DataFrame(columns=['tradeDate', 'openTime', 'closeTime', 'tradeDirection',
                                           'openSpread', 'closeSpread', 'profitSpread', 'profitTrade'])
     count_num = -1
 
@@ -94,6 +95,7 @@ def strategy(underlying_list, start_date, end_date, diff=0.0015, stop=-0.001, cl
                         pos_par = -1
                     else:
                         pos_par = 1
+                    trade_details.loc[count_num, 'tradeDate'] = date
                     trade_details.loc[count_num, 'openTime'] = data_series.index[-1]
                     trade_details.loc[count_num, 'tradeDirection'] = pos_par
                     trade_details.loc[count_num, 'openSpread'] = open_spread
@@ -103,6 +105,7 @@ def strategy(underlying_list, start_date, end_date, diff=0.0015, stop=-0.001, cl
                     pos_par = -1
                     hold_par = True
                     count_num += 1
+                    trade_details.loc[count_num, 'tradeDate'] = date
                     trade_details.loc[count_num, 'openTime'] = data_series.index[-1]
                     trade_details.loc[count_num, 'tradeDirection'] = pos_par
                     trade_details.loc[count_num, 'openSpread'] = open_spread
@@ -112,6 +115,7 @@ def strategy(underlying_list, start_date, end_date, diff=0.0015, stop=-0.001, cl
                     pos_par = 1
                     hold_par = True
                     count_num += 1
+                    trade_details.loc[count_num, 'tradeDate'] = date
                     trade_details.loc[count_num, 'openTime'] = data_series.index[-1]
                     trade_details.loc[count_num, 'tradeDirection'] = pos_par
                     trade_details.loc[count_num, 'openSpread'] = open_spread
@@ -197,27 +201,20 @@ if __name__ == '__main__':
     rq.init("ricequant", "8ricequant8", ('10.29.135.119', 16010))
 
     # 参数 回测区间及合约代码
-    # startDate = '20200511'
-    # endDate = '20200514'
-    # contractList = ('IF2005', 'IH2005')
-    # diffPar = 0.0015
-    # stopPar = -0.0015
-    # closePar = 0.0015
-    # openLen = 1200
-    # closeLen = 7200
     startDate = '20200518'
     endDate = '20200531'
-    contractList = ('IF2006', 'IH2006')
+    underlyingList = ('IF', 'IH')
     diffPar = 0.004
     stopPar = -0.003
     closePar = 0.003
     openLen = 1800
     closeLen = 7200
 
-    tradeDetails = strategy(contractList, startDate, endDate, diff=diffPar,
+    underlying_list = underlyingList
+    start_date = startDate
+    end_date = endDate
+
+    tradeDetails = strategy(underlyingList, startDate, endDate, diff=diffPar,
                             stop=stopPar, close=closePar, open_len=openLen, close_len=closeLen)
     tradeDetails['profitTrade'].mean()
-    a = rq.get_all_factor_names()
-
-    b = rq.get_factor(['000001.XSHE'],'market_cap_3',start_date='20200101',end_date='20200201')
 
