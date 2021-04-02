@@ -71,10 +71,10 @@ if __name__ == '__main__':
     rq.init("ricequant", "8ricequant8", ('10.29.135.119', 16010))
 
     # trade_date = datetime.datetime.now().strftime('%Y%m%d')
-    startDate = '20200304'
-    endDate = '20200309'
+    startDate = '20201212'
+    endDate = '20201214'
 
-    contractList = ('IF2003', 'IH2003')
+    contractList = ('IF2012', 'IH2012')
     # contractList = 'IF2003'
 
     Data = future_data_load(contractList, start_date=startDate, end_date=endDate)

@@ -45,6 +45,80 @@ def trading_data(underlying_list, start_date, end_date):
     return price_data
 
 
+def strategy(underlying_list, start_date, end_date, quantile=0.03, close=0.003, stop=-0.003, close_len=7200):
+    # 数据加载
+    future_data = trading_data(underlying_list, start_date=start_date, end_date=end_date)
+    spread_data = intercommodityArbitrage.spreadAnalysis.spread_analysis(underlying_list, start_date, end_date)
+
+    # 逐tick回测，获取交易信号
+    trade_details = pd.DataFrame(columns=['openTime', 'closeTime', 'tradeDirection',
+                                          'openSpread', 'closeSpread', 'profitSpread', 'profitTrade'])
+    count_num = -1
+
+    date_list = rq.get_trading_dates(start_date, end_date)
+    for date in date_list:
+        # date = date_list[0]
+        print(date)
+        hold_par = False
+        pos_par = 0
+        open_spread = 0
+        open_order = 0
+
+        daily_spread = spread_data[future_data['trading_date'] == date]
+
+        STOP_LOSS_PRICE = stopLossPrice
+        bBreak = bBreak
+        sSetup = sSetup
+        sEnter = sEnter
+        bEnter = bEnter
+        bSetup = bSetup
+        sBreak = sBreak
+
+        for order in range(1, daily_spread.shape[0] - 1):
+            # order = 0
+            last_spread = daily_spread.iloc[order, 4]
+
+            if not hold_par:
+                if last_spread > bBreak:
+                    open_spread = last_spread
+                    open_order = order
+                    pos_par = 1
+                    hold_par = True
+                    count_num += 1
+                    trade_details.loc[count_num, 'tradeDate'] = date
+                    trade_details.loc[count_num, 'openTime'] = daily_spread.index[order]
+                    trade_details.loc[count_num, 'tradeDirection'] = pos_par
+                    trade_details.loc[count_num, 'openSpread'] = open_spread
+                elif last_spread < sBreak:
+                    open_spread = last_spread
+                    open_order = order
+                    pos_par = -1
+                    hold_par = True
+                    count_num += 1
+                    trade_details.loc[count_num, 'tradeDate'] = date
+                    trade_details.loc[count_num, 'openTime'] = daily_spread.index[order]
+                    trade_details.loc[count_num, 'tradeDirection'] = pos_par
+                    trade_details.loc[count_num, 'openSpread'] = open_spread
+            else:
+                profit_spread = last_spread - open_spread
+                if (profit_spread <= STOP_LOSS_PRICE) and (pos_par == 1):
+                    trade_details.loc[count_num, 'closeTime'] = daily_spread.index[order]
+                    trade_details.loc[count_num, 'closeSpread'] = last_spread
+                    trade_details.loc[count_num, 'profitSpread'] = profit_spread
+                    pos_par = 0
+                    hold_par = False
+                if (profit_spread >= -STOP_LOSS_PRICE) and (pos_par == -1):
+                    trade_details.loc[count_num, 'closeTime'] = daily_spread.index[order]
+                    trade_details.loc[count_num, 'closeSpread'] = last_spread
+                    trade_details.loc[count_num, 'profitSpread'] = -profit_spread
+                    pos_par = 0
+                    hold_par = False
+
+
+
+
+
+
 if __name__ == '__main__':
     rq.init("ricequant", "8ricequant8", ('10.29.135.119', 16010))
 
